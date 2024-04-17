@@ -1,10 +1,4 @@
-import { createCanvas, loadImage } from 'canvas';
-import { writeFileSync } from 'fs';
-
-import Room from './Room.js';
-
-const canvas = createCanvas(400, 400);
-const ctx = canvas.getContext('2d');
+// PARAMETERS //
 
 // Padding on each side of the respective axis where nothing will be drawn
 const X_PADDING = 50;
@@ -13,6 +7,18 @@ const Y_PADDING = 30;
 const LAYERS = 5;  // The number of vertical "layers" there will be
 const NUM_ROOMS = 20;
 
+// END PARAMETERS //
+
+
+
+// Libraries
+import { createCanvas, loadImage } from 'canvas';
+import { writeFileSync } from 'fs';
+
+import Room from './Room.js';
+
+
+// PLAN OUT MAP //
 // Each index in the format [room_name, weight], where weight is the liklihood the room appears
 const ROOM_TYPES = [
     ['Combat', 0.6],
@@ -37,6 +43,9 @@ for (let i = 0; i < NUM_ROOMS; i++) {
 }
 
 // DRAW THE IMAGE //
+const canvas = createCanvas(400, 400);
+const ctx = canvas.getContext('2d');
+
 
 // Background
 ctx.fillStyle = 'rgb(255, 255, 255)';
