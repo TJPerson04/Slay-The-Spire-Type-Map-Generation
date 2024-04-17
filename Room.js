@@ -4,12 +4,20 @@
 export default class Room {
     #x = 0;
     #y = 0;
+    #col = 0;
+    #row = 0;
     #type = '';
+    #connectedRooms = [];
 
-    constructor (x, y, type) {
+    constructor (x, y, type, row, col, connectedRoom = null) {
         this.#x = x;
         this.#y = y;
+        this.#col = col;
+        this.#row = row;
         this.#type = type;
+        if (connectedRoom) {
+            this.#connectedRooms.push(connectedRoom);
+        }
     }
 
     findDist(x, y) {
@@ -26,5 +34,26 @@ export default class Room {
 
     getY() {
         return this.#y;
+    }
+
+    getCol() {
+        return this.#col;
+    }
+
+    getRow() {
+        return this.#row;
+    }
+
+    getConnectedRooms() {
+        return this.#connectedRooms;
+    }
+
+    /**
+     * Adds a room that is connected to this room but on a lower level in the map
+     * 
+     * @param {Room} room The room to connect
+     */
+    addConnectedRoom(room) {
+        this.#connectedRooms.push(room);
     }
 }
