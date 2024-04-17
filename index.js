@@ -1,21 +1,27 @@
 // PARAMETERS //
 
-// Padding on each side of the respective axis where nothing will be drawn
-const X_PADDING = 50;
-const Y_PADDING = 30;
+const VERT_LAYERS = 15;  // The number of vertical "layers" the rooms will be divided into
+const HORIZ_LAYERS = 7;  // The number of horizontal "layers" the rooms will be divided into
+const NUM_ROOMS = 63;  // The total number of rooms to generate
 
-const LAYERS = 5;  // The number of vertical "layers" there will be
-const NUM_ROOMS = 20;
+const IMG_HEIGHT = 800;  // The height of the outputted image (in pixels)
+const IMG_WIDTH = 800;  // The width of the outputted image (in pixels)
+
+const X_PADDING = 50;  // The amount of empty space on the right and left edges of the image
+const Y_PADDING = 30;  // The amount of empty space on the top and bottom edges of the image
 
 // END PARAMETERS //
 
 
 
 // Libraries
-import { createCanvas, loadImage } from 'canvas';
+import { createCanvas } from 'canvas';
 import { writeFileSync } from 'fs';
 
 import Room from './Room.js';
+
+const canvas = createCanvas(IMG_WIDTH, IMG_HEIGHT);
+const ctx = canvas.getContext('2d');
 
 
 // PLAN OUT MAP //
@@ -32,9 +38,12 @@ const ROOM_TYPES = [
 let rooms = [];
 
 for (let i = 0; i < NUM_ROOMS; i++) {
-    let x = Math.floor(Math.random() * (canvas.width - X_PADDING * 2)) + X_PADDING;
-    let spaceBetweenLayers = (canvas.height - (2 * Y_PADDING)) / (LAYERS - 1);
-    let y =  spaceBetweenLayers * Math.floor(Math.random() * LAYERS) + Y_PADDING;
+    let spaceBetweenLayersX = (canvas.width - (2 * X_PADDING)) / (HORIZ_LAYERS - 1);
+    let x =  spaceBetweenLayersX * Math.floor(Math.random() * HORIZ_LAYERS) + X_PADDING;
+    
+    let spaceBetweenLayersY = (canvas.height - (2 * Y_PADDING)) / (VERT_LAYERS - 1);
+    let y =  spaceBetweenLayersY * Math.floor(Math.random() * VERT_LAYERS) + Y_PADDING;
+    
     let typeIndex = Math.floor(Math.random() * ROOM_TYPES.length);
     let type = ROOM_TYPES[typeIndex];
 
@@ -43,9 +52,6 @@ for (let i = 0; i < NUM_ROOMS; i++) {
 }
 
 // DRAW THE IMAGE //
-const canvas = createCanvas(400, 400);
-const ctx = canvas.getContext('2d');
-
 
 // Background
 ctx.fillStyle = 'rgb(255, 255, 255)';
