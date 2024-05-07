@@ -59,8 +59,8 @@ for (let i = 0; i < ROWS; i++) {
 // Generate the first row
 for (let i = 0; i < possibleSpotsX.length; i++) {
     if (Math.random() < 0.5) {  // Currently a 50% chance that a spot on the first row will be a room
-        let typeIndex = Math.floor(Math.random() * ROOM_TYPES.length);
-        let type = ROOM_TYPES[typeIndex];
+        let typeIndex = Math.floor(Math.random() * ROOM_TYPES.length);  // Currently the room type is completely random
+        let type = ROOM_TYPES[typeIndex][0];
 
         let x = possibleSpotsX[i];
         let y = possibleSpotsY[0];
@@ -94,7 +94,7 @@ for (let i = 0; i < rooms.length; i++) {
             perc -= 0.03;
 
             let typeIndex = Math.floor(Math.random() * ROOM_TYPES.length);
-            let type = ROOM_TYPES[typeIndex];
+            let type = ROOM_TYPES[typeIndex][0];
 
             let col = rooms[i].getCol() + offset;
             let row = rooms[i].getRow() + 1;
@@ -114,7 +114,7 @@ for (let i = 0; i < rooms.length; i++) {
             offset = Math.round(Math.random()) - 1;
         }
         let typeIndex = Math.floor(Math.random() * ROOM_TYPES.length);
-        let type = ROOM_TYPES[typeIndex];
+        let type = ROOM_TYPES[typeIndex][0];
 
         let col = rooms[i].getCol() + offset;
         let row = rooms[i].getRow() + 1;
@@ -146,10 +146,6 @@ ctx.fillStyle = 'rgb(0, 0, 0)';
 
 // Rooms
 rooms.forEach(room => {
-    ctx.beginPath();
-    ctx.fillRect(room.getX() - 5, room.getY() - 5, 10, 10)  // - 5 is so that room.x and room.y are in the center of the rectangle, since they will be 10 pixels wide and tall
-    ctx.stroke();
-
     if (room.getRow() == possibleSpotsY.length - 1) {  // If the room is in the last row
         let newRoom = room;
         while (true) {
@@ -165,6 +161,26 @@ rooms.forEach(room => {
         }
     }
 });
+
+rooms.forEach(room => {  // Separate loop so that the lines are drawn first and the room shapes are drawn on top
+    ctx.beginPath();
+    if (room.getType() == 'Combat') {
+        ctx.fillStyle = 'rgb(255, 0, 0)'
+    } else if (room.getType() == 'Shop') {
+        ctx.fillStyle = 'rgb(138, 122, 33)'
+    } else if (room.getType() == 'Elite Combat') {
+        ctx.fillStyle = 'rgb(163, 92, 191)'
+    } else if (room.getType() == 'Boon') {
+        ctx.fillStyle = 'rgb(160, 250, 239)'
+    } else if (room.getType() == 'Feat') {
+        ctx.fillStyle = 'rgb(24, 128, 28)'
+    } else {
+        console.log(room.getType())
+    }
+    ctx.fillRect(room.getX() - 5, room.getY() - 5, 10, 10)  // - 5 is so that room.x and room.y are in the center of the rectangle, since they will be 10 pixels wide and tall
+    ctx.fillStyle = 'rgb(0, 0, 0)'
+    ctx.stroke();
+})
 
 
 
