@@ -73,7 +73,7 @@ for (let i = 0; i < possibleSpotsX.length; i++) {
 let left = possibleSpotsX[0];
 let right = possibleSpotsX[possibleSpotsX.length - 1];
 
-for (let i = 1; i < rooms.length; i++) {
+for (let i = 0; i < rooms.length; i++) {
     if (rooms[i].getY() == possibleSpotsY[possibleSpotsY - 1]) {
         break;
     }
@@ -86,10 +86,12 @@ for (let i = 1; i < rooms.length; i++) {
         offsets = [-1, 0, 1];
     }
 
-    let perc = 0.3
+    let perc = 0.1  // Currently a 10% each spot will have a room
+    let hasConnect = false
     offsets.forEach((offset) => {
-        if (Math.random() < perc) {  // Currently a 50% each spot will have a room
-            perc -= 0.1;
+        if (Math.random() < perc) {
+            hasConnect = true
+            perc -= 0.03;
 
             let typeIndex = Math.floor(Math.random() * ROOM_TYPES.length);
             let type = ROOM_TYPES[typeIndex];
@@ -104,6 +106,25 @@ for (let i = 1; i < rooms.length; i++) {
             rooms.push(room);
         }
     })
+    if (!hasConnect) {
+        let offset = Math.round(Math.random() * 2) - 1
+        if (rooms[i].getX() == left) {
+            offset = Math.round(Math.random());
+        } else if (rooms[i].getX() == right) {
+            offset = Math.round(Math.random()) - 1;
+        }
+        let typeIndex = Math.floor(Math.random() * ROOM_TYPES.length);
+        let type = ROOM_TYPES[typeIndex];
+
+        let col = rooms[i].getCol() + offset;
+        let row = rooms[i].getRow() + 1;
+
+        let x = possibleSpotsX[col];
+        let y = possibleSpotsY[row];
+
+        let room = new Room(x, y, type, row, col, rooms[i]);
+        rooms.push(room);
+    }
 }
 
 // for (let i = 0; i < NUM_ROOMS; i++) {
