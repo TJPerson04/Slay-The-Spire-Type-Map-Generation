@@ -20,7 +20,7 @@ const Y_PADDING = 30;  // The amount of empty space on the top and bottom edges 
 
 
 // Libraries
-import { createCanvas } from 'canvas';
+import { createCanvas, loadImage } from 'canvas';
 import { writeFileSync } from 'fs';
 
 import Room from './Room.js';
@@ -72,6 +72,7 @@ for (let i = 0; i < possibleSpotsX.length; i++) {
 
 let left = possibleSpotsX[0];
 let right = possibleSpotsX[possibleSpotsX.length - 1];
+let takenSpots = [];
 
 for (let i = 0; i < rooms.length; i++) {
     if (rooms[i].getY() == possibleSpotsY[possibleSpotsY - 1]) {
@@ -102,8 +103,11 @@ for (let i = 0; i < rooms.length; i++) {
             let x = possibleSpotsX[col];
             let y = possibleSpotsY[row];
 
-            let room = new Room(x, y, type, row, col, rooms[i]);
-            rooms.push(room);
+            if (!("(" + col + ", " + row + ")" in takenSpots)) {
+                takenSpots.push("(" + col + ", " + row + ")");
+                let room = new Room(x, y, type, row, col, rooms[i]);
+                rooms.push(room);
+            }
         }
     })
     if (!hasConnect) {
@@ -122,8 +126,11 @@ for (let i = 0; i < rooms.length; i++) {
         let x = possibleSpotsX[col];
         let y = possibleSpotsY[row];
 
-        let room = new Room(x, y, type, row, col, rooms[i]);
-        rooms.push(room);
+        if (!("(" + col + ", " + row + ")" in takenSpots)) {
+            takenSpots.push("(" + col + ", " + row + ")");
+            let room = new Room(x, y, type, row, col, rooms[i]);
+            rooms.push(room);
+        }
     }
 }
 
@@ -162,10 +169,15 @@ rooms.forEach(room => {
     }
 });
 
-rooms.forEach(room => {  // Separate loop so that the lines are drawn first and the room shapes are drawn on top
+let combatImg = await loadImage('./Combat_Icon.png');
+
+rooms.forEach(async (room) => {  // Separate loop so that the lines are drawn first and the room shapes are drawn on top
+    let isSquare = true;
     ctx.beginPath();
     if (room.getType() == 'Combat') {
-        ctx.fillStyle = 'rgb(255, 0, 0)'
+        // ctx.fillStyle = 'rgb(255, 0, 0)'
+        ctx.drawImage(combatImg, room.getX() - 12, room.getY() - 21, 24, 42);
+        isSquare = false;
     } else if (room.getType() == 'Shop') {
         ctx.fillStyle = 'rgb(138, 122, 33)'
     } else if (room.getType() == 'Elite Combat') {
@@ -177,7 +189,9 @@ rooms.forEach(room => {  // Separate loop so that the lines are drawn first and 
     } else {
         console.log(room.getType())
     }
-    ctx.fillRect(room.getX() - 5, room.getY() - 5, 10, 10)  // - 5 is so that room.x and room.y are in the center of the rectangle, since they will be 10 pixels wide and tall
+    if (isSquare) {
+        ctx.fillRect(room.getX() - 5, room.getY() - 5, 10, 10)  // - 5 is so that room.x and room.y are in the center of the rectangle, since they will be 10 pixels wide and tall
+    }
     ctx.fillStyle = 'rgb(0, 0, 0)'
     ctx.stroke();
 })
